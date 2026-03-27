@@ -18,7 +18,7 @@
 ### Backend
 cd backend
 npm install
-npm run dev
+npm start
 
 ### Frontend
 cd frontend
