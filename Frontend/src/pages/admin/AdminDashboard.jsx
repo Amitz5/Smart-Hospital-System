@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   PieChart,
   Pie,
@@ -73,105 +76,146 @@ export default function AdminDashboard() {
 
   const COLORS = ["#facc15", "#22c55e", "#ef4444"];
 
-  return (
-    <>
-      <Navbar />
-        <div className="min-h-screen bg-gray-100">
-        <div className="max-w-6xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">Admin Analytics</h1>
+ return (
+  <>
+    <Navbar />
+
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-6xl mx-auto p-6">
+
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">
+          Admin Analytics
+        </h1>
+
+        {/* FILTER BUTTONS */}
         <div className="flex gap-3 mb-6">
           {["today", "week", "month"].map((option) => (
-            <button
+            <Button
               key={option}
               onClick={() => setRange(option)}
-              className={`px-4 py-2 rounded-full font-medium transition ${
-                range === option
-                  ? "bg-blue-600 text-white shadow"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
+              variant={range === option ? "default" : "outline"}
+              className="capitalize"
             >
-              {option.toUpperCase()}
-            </button>
+              {option}
+            </Button>
           ))}
         </div>
 
-        <h2 className="text-xl font-semibold mb-4">Create Doctor</h2>
+        {/* STATS CARDS */}
+        <div className="grid md:grid-cols-4 gap-4 mb-6">
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-500">Total</p>
+              <h2 className="text-2xl font-bold">{stats.total}</h2>
+            </CardContent>
+          </Card>
 
-        <form
-          onSubmit={handleCreateDoctor}
-          className="bg-white p-4 rounded shadow mb-8"
-        >
-          <div className="grid md:grid-cols-3 gap-4">
-            <input
-              type="text"
-              placeholder="Doctor Name"
-              className="border p-2 rounded"
-              onChange={(e) => setDoctorName(e.target.value)}
-              required
-            />
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-500">Booked</p>
+              <h2 className="text-2xl font-bold text-yellow-600">
+                {stats.booked}
+              </h2>
+            </CardContent>
+          </Card>
 
-            <input
-              type="email"
-              placeholder="Doctor Email"
-              className="border p-2 rounded"
-              onChange={(e) => setDoctorEmail(e.target.value)}
-              required
-            />
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-500">Completed</p>
+              <h2 className="text-2xl font-bold text-green-600">
+                {stats.completed}
+              </h2>
+            </CardContent>
+          </Card>
 
-            <input
-              type="password"
-              placeholder="Password"
-              className="border p-2 rounded"
-              onChange={(e) => setDoctorPassword(e.target.value)}
-              required
-            />
-          </div>
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-500">Cancelled</p>
+              <h2 className="text-2xl font-bold text-red-600">
+                {stats.cancelled}
+              </h2>
+            </CardContent>
+          </Card>
+        </div>
 
-          <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg">
-            Create Doctor
-          </button>
-        </form>
+        {/* CREATE DOCTOR */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Create Doctor</CardTitle>
+          </CardHeader>
 
+          <CardContent>
+            <form onSubmit={handleCreateDoctor} className="space-y-4">
+              <div className="grid md:grid-cols-3 gap-4">
+                <Input
+                  placeholder="Doctor Name"
+                  onChange={(e) => setDoctorName(e.target.value)}
+                />
+
+                <Input
+                  type="email"
+                  placeholder="Doctor Email"
+                  onChange={(e) => setDoctorEmail(e.target.value)}
+                />
+
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  onChange={(e) => setDoctorPassword(e.target.value)}
+                />
+              </div>
+
+              <Button>Create Doctor</Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* CHARTS */}
         <div className="grid md:grid-cols-2 gap-6">
 
           {/* Pie Chart */}
-          <div className="bg-white p-4 rounded shadow">
-            <h2 className="font-semibold mb-4">Appointment Status</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  outerRadius={100}
-                  label
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Appointment Status</CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={pieData} dataKey="value" outerRadius={100} label>
+                    {pieData.map((entry, index) => (
+                      <Cell key={index} fill={COLORS[index]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
 
           {/* Bar Chart */}
-          <div className="bg-white p-4 rounded shadow">
-            <h2 className="font-semibold mb-4">Emergency vs Normal</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#3b82f6" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Emergency vs Normal</CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={barData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#3b82f6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
 
         </div>
       </div>
-      </div>
-    </>
-  );
+    </div>
+  </>
+);
 }

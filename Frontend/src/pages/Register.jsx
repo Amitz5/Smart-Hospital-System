@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -48,73 +51,62 @@ export default function Register() {
   }
 };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow w-96"
-      >
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Create Account
-      </h2>
+return (
+  <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <Card className="w-[380px] shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-center text-2xl">
+          Create Account
+        </CardTitle>
+      </CardHeader>
 
-      {/* STEP 1 */}
-      {step === 1 && (
-        <>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            className="border p-2 w-full mb-4 rounded"
-            onChange={handleChange}
-            required
-          />
+      <CardContent className="space-y-4">
 
-          <button
-            type="button"
-            onClick={handleSendOtp}
-            className="bg-blue-600 text-white w-full py-2 rounded-lg"
-          >
-            Send OTP
-          </button>
-        </>
-      )}
+        {/* STEP 1 */}
+        {step === 1 && (
+          <>
+            <Input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              onChange={handleChange}
+            />
 
-      {/* STEP 2 */}
-      {step === 2 && (
-        <>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            className="border p-2 w-full mb-4 rounded"
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
+            <Button onClick={handleSendOtp} className="w-full">
+              Send OTP
+            </Button>
+          </>
+        )}
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            className="border p-2 w-full mb-4 rounded"
-            onChange={handleChange}
-            required
-          />
+        {/* STEP 2 */}
+        {step === 2 && (
+          <>
+            <Input
+              placeholder="Enter OTP"
+              onChange={(e) => setOtp(e.target.value)}
+            />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="border p-2 w-full mb-4 rounded"
-            onChange={handleChange}
-            required
-          />
+            <Input
+              name="name"
+              placeholder="Full Name"
+              onChange={handleChange}
+            />
 
-          <button className="bg-green-600 text-white w-full py-2 rounded-lg">
-            Verify & Register
-          </button>
-        </>
-      )}
-      </form>
-    </div>
-  );
+            <Input
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={handleChange}
+            />
+
+            <Button className="w-full bg-green-600 hover:bg-green-700">
+              Verify & Register
+            </Button>
+          </>
+        )}
+
+      </CardContent>
+    </Card>
+  </div>
+);
 }

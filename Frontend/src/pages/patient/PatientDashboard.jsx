@@ -2,6 +2,9 @@ import Navbar from "../../components/Navbar";
 import { useState,useEffect } from "react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function PatientDashboard() {
   const [doctorId, setDoctorId] = useState("");
@@ -95,101 +98,104 @@ useEffect(() => {
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Patient Dashboard</h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow p-4 rounded w-96"
+     <Card className="mb-8 shadow-md">
+  <CardHeader>
+    <CardTitle>Book Appointment</CardTitle>
+  </CardHeader>
+
+  <CardContent className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+
+      <select
+        className="border p-2 w-full rounded-md"
+        value={doctorId}
+        onChange={(e) => setDoctorId(e.target.value)}
       >
-        <select
-          className="border p-2 w-full mb-3"
-          value={doctorId}
-          onChange={(e) => setDoctorId(e.target.value)}
-            >
-          <option value="">Select Doctor</option>
+        <option value="">Select Doctor</option>
+        {doctors.map((doc) => (
+          <option key={doc._id} value={doc._id}>
+            {doc.name}
+          </option>
+        ))}
+      </select>
 
-          {doctors.map((doc) => (
-            <option key={doc._id} value={doc._id}>
-              {doc.name}
-            </option>
-          ))}
-        </select>
+      <Input
+        type="date"
+        onChange={(e) => setDate(e.target.value)}
+      />
 
+      <Input
+        type="text"
+        placeholder="Timeslot (10:00 - 11:00)"
+        onChange={(e) => setTimeslot(e.target.value)}
+      />
 
+      <label className="flex items-center gap-2 text-sm">
         <input
-          type="date"
-          className="border p-2 w-full mb-3"
-          onChange={(e) => setDate(e.target.value)}
+          type="checkbox"
+          onChange={(e) => setIsEmergency(e.target.checked)}
         />
+        Emergency Case
+      </label>
 
-        <input
-          type="text"
-          placeholder="Timeslot (10:00 - 11:00)"
-          className="border p-2 w-full mb-3"
-          onChange={(e) => setTimeslot(e.target.value)}
-        />
+      <Button className="w-full">
+        Book Appointment
+      </Button>
 
-        <label className="flex items-center gap-2 mb-3">
-          <input
-            type="checkbox"
-            onChange={(e) => setIsEmergency(e.target.checked)}
-          />
-          Emergency Case
-        </label>
-
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
-          Book Appointment
-        </button>
-      </form>
+    </form>
+  </CardContent>
+</Card>
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-3">My Appointments</h2>
 
         {appointments.map((appt) => (
-          <div
-            key={appt._id}
-            className="bg-white p-5 rounded-xl shadow hover:shadow-lg transition mb-4 border border-gray-100"
-          >
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-lg">
-                Dr. {appt.doctor?.name}
-              </h3>
+          <Card key={appt._id} className="mb-4 shadow-sm hover:shadow-md transition">
+  <CardContent className="p-5">
 
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  appt.status === "booked"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : appt.status === "completed"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {appt.status}
-              </span>
-            </div>
+    <div className="flex justify-between items-center">
+      <h3 className="font-semibold text-lg">
+        Dr. {appt.doctor?.name}
+      </h3>
 
-            <p className="text-gray-600 mt-2">
-              📅 {new Date(appt.appointmentDate).toDateString()}
-            </p>
+      <span
+        className={`px-3 py-1 rounded-full text-sm font-medium ${
+          appt.status === "booked"
+            ? "bg-yellow-100 text-yellow-700"
+            : appt.status === "completed"
+            ? "bg-green-100 text-green-700"
+            : "bg-red-100 text-red-700"
+        }`}
+      >
+        {appt.status}
+      </span>
+    </div>
 
-            <p className="text-gray-600">
-              ⏰ {appt.timeSlot}
-            </p>
+    <p className="text-gray-600 mt-2">
+      📅 {new Date(appt.appointmentDate).toDateString()}
+    </p>
 
-            {queuePositions[appt._id] && (
-              <p className="text-green-600 font-medium mt-2">
-                🟢 Your Queue Position: #{queuePositions[appt._id]}
-              </p>
-            )}
+    <p className="text-gray-600">
+      ⏰ {appt.timeSlot}
+    </p>
 
-            {appt.status === "booked" && (
-              <button
-                onClick={() => cancelAppointment(appt._id)}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition"
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        ))}
+    {queuePositions[appt._id] && (
+      <p className="text-green-600 font-medium mt-2">
+        🟢 Queue Position: #{queuePositions[appt._id]}
+      </p>
+    )}
+
+    {appt.status === "booked" && (
+      <Button
+        onClick={() => cancelAppointment(appt._id)}
+        className="mt-3 bg-red-500 hover:bg-red-600"
+      >
+        Cancel
+      </Button>
+    )}
+
+  </CardContent>
+</Card>))}
       </div>
     </div>
     </div>
