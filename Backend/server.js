@@ -8,6 +8,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: ["http://localhost:5173", "https://smart-hospital-system-sigma.vercel.app"],
+  credentials: true
 }));
 app.use(express.json());
 app.use("/api/auth", require("./routes/authRoutes"));
