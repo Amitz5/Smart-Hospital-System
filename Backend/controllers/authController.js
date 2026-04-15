@@ -30,51 +30,51 @@ exports.register = async (req, res) => {
 };
 
 //OTP
-exports.sendOtp = async (req, res) => {
-  const { email } = req.body;
+// exports.sendOtp = async (req, res) => {
+//   const { email } = req.body;
 
-  const otp = Math.floor(100000 + Math.random() * 900000);
+//   const otp = Math.floor(100000 + Math.random() * 900000);
 
-  otpStore[email] = otp;
+//   otpStore[email] = otp;
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+//   const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: {
+//       user: process.env.EMAIL_USER,
+//       pass: process.env.EMAIL_PASS,
+//     },
+//   });
 
-  await transporter.sendMail({
-    to: email,
-    subject: "OTP Verification",
-    text: `Your OTP is ${otp}`,
-  });
+//   await transporter.sendMail({
+//     to: email,
+//     subject: "OTP Verification",
+//     text: `Your OTP is ${otp}`,
+//   });
 
-  res.json({ message: "OTP sent successfully" });
-};
+//   res.json({ message: "OTP sent successfully" });
+// };
 
 //verify OTP
-exports.verifyOtp = async (req, res) => {
-  const { name, email, password, otp } = req.body;
+// exports.verifyOtp = async (req, res) => {
+//   const { name, email, password, otp } = req.body;
 
-  if (otpStore[email] != otp) {
-    return res.status(400).json({ message: "Invalid OTP" });
-  }
+//   if (otpStore[email] != otp) {
+//     return res.status(400).json({ message: "Invalid OTP" });
+//   }
 
-const hashedPassword = await bcrypt.hash(password, 10);
+// const hashedPassword = await bcrypt.hash(password, 10);
 
-const user = await User.create({
-  name,
-  email,
-  password: hashedPassword,
-  role: "patient",
-});
+// const user = await User.create({
+//   name,
+//   email,
+//   password: hashedPassword,
+//   role: "patient",
+// });
 
-  delete otpStore[email];
+//   delete otpStore[email];
 
-  res.json({ message: "User registered successfully" });
-};
+//   res.json({ message: "User registered successfully" });
+// };
 
 // LOGIN
 exports.login = async (req, res) => {
