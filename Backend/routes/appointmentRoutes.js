@@ -5,6 +5,7 @@ const { bookAppointment } = require("../controllers/appointmentController");
 const { protect, authorize } = require("../middleware/authMiddleware");
 const { getDoctorQueue } = require("../controllers/appointmentController");
 const { getAdminStats } = require("../controllers/appointmentController");
+const { completeAppointment } = require("../controllers/appointmentController");
 
 // Patient books appointment
 router.post(
@@ -14,6 +15,12 @@ router.post(
   bookAppointment
 );
 
+router.get(
+  "/available-slots",
+  protect,
+  getAvailableSlots
+);
+
 // Doctor views own queue
 router.get(
   "/doctor/queue",
@@ -21,8 +28,6 @@ router.get(
   authorize("doctor"),
   getDoctorQueue
 );
-
-const { completeAppointment } = require("../controllers/appointmentController");
 
 // Doctor completes appointment
 router.put(

@@ -1,10 +1,83 @@
 const Appointment = require("../models/Appointment");
 
+//get available slots
+exports.getAvailableSlots = async (req, res) => {
+  try {
+    const { doctor, date } = req.query;
+
+    const ALL_SLOTS = [
+      "10:00 AM - 11:00 AM",
+      "11:00 AM - 12:00 PM",
+      "12:00 PM - 01:00 PM",
+      "01:00 PM - 02:00 PM",
+      "02:00 PM - 03:00 PM",
+      "03:00 PM - 04:00 PM",
+    ];
+
+    const selectedDate = new Date(date);
+
+    selectedDate.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(selectedDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    const bookedAppointments = await Appointment.find({
+      doctor,
+      appointmentDate: {
+        $gte: selectedDate,
+        $lt: nextDay,
+      },
+      status: {
+        $ne: "cancelled",
+      },
+    });
+
+    const occupiedSlots = bookedAppointments.map(
+      (appt) => appt.timeSlot
+    );
+
+    const availableSlots = ALL_SLOTS.filter(
+      (slot) => !occupiedSlots.includes(slot)
+    );
+
+    res.json({ availableSlots });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // BOOK APPOINTMENT (Patient)
 exports.bookAppointment = async (req, res) => {
   try {
     const { doctor, appointmentDate, timeSlot, isEmergency } = req.body;
 
+    // ✅ Prevent past date booking
+    const selectedDate = new Date(appointmentDate);
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      return res.status(400).json({
+        message: "Cannot book appointment for past dates",
+      });
+    }
+
+      const existingAppointment = await Appointment.findOne({
+      doctor,
+      appointmentDate,
+      timeSlot,
+      status: { $ne: "cancelled" },
+    });
+
+    if (existingAppointment) {
+      return res.status(400).json({
+        message: "Time slot already booked",
+      });
+    }
+    
     const appointment = await Appointment.create({
       patient: req.user.id,
       doctor: doctor,

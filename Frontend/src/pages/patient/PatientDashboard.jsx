@@ -6,6 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+const ALL_SLOTS = [
+  "10:00 AM - 11:00 AM",
+  "11:00 AM - 12:00 PM",
+  "12:00 PM - 01:00 PM",
+  "01:00 PM - 02:00 PM",
+  "02:00 PM - 03:00 PM",
+  "03:00 PM - 04:00 PM",
+];
+
 export default function PatientDashboard() {
   const [doctorId, setDoctorId] = useState("");
   const [doctors, setDoctors] = useState([]);
@@ -14,6 +23,7 @@ export default function PatientDashboard() {
   const [isEmergency, setIsEmergency] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [queuePositions, setQueuePositions] = useState({});
+  const [availableSlots, setAvailableSlots] = useState([]);
 
 
   useEffect(() => {
@@ -57,6 +67,23 @@ useEffect(() => {
   if (appointments.length) fetchQueue();
 }, [appointments]);
   
+   useEffect(() => {
+    if (doctorId && date) {
+      fetchAvailableSlots();
+    }
+  }, [doctorId, date]);
+
+  const fetchAvailableSlots = async () => {
+    try {
+      const res = await api.get(
+        `/appointments/available-slots?doctor=${doctorId}&date=${date}`
+      );
+
+      setAvailableSlots(res.data.availableSlots);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,14 +148,22 @@ useEffect(() => {
 
       <Input
         type="date"
+         min={new Date().toISOString().split("T")[0]}
         onChange={(e) => setDate(e.target.value)}
       />
 
-      <Input
-        type="text"
-        placeholder="Timeslot (10:00 - 11:00)"
-        onChange={(e) => setTimeslot(e.target.value)}
-      />
+      <select
+                  value={timeslot}
+                  onChange={(e) => setTimeslot(e.target.value)}
+                >
+                  <option value="">Select Time Slot</option>
+
+                  {availableSlots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
 
       <label className="flex items-center gap-2 text-sm">
         <input
