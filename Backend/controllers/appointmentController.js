@@ -133,23 +133,40 @@ exports.completeAppointment = async (req, res) => {
   try {
     const appointmentId = req.params.id;
 
+    const { medicines, diagnosis, advice } = req.body;
+
     const appointment = await Appointment.findById(appointmentId);
 
     if (!appointment) {
-      return res.status(404).json({ message: "Appointment not found" });
+      return res.status(404).json({
+        message: "Appointment not found",
+      });
     }
 
-    // Ensure doctor is completing only their own appointment
     if (appointment.doctor.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Unauthorized action" });
+      return res.status(403).json({
+        message: "Unauthorized action",
+      });
     }
 
     appointment.status = "completed";
+
+    appointment.prescription = {
+      medicines,
+      diagnosis,
+      advice,
+    };
+
     await appointment.save();
 
-    res.json({ message: "Appointment marked as completed" });
+    res.json({
+      message: "Appointment completed with prescription",
+    });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 

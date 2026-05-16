@@ -118,123 +118,176 @@ useEffect(() => {
   }
 };
 
-  return (
-    <>
+return (
+  <>
     <Navbar />
+
     <div className="min-h-screen bg-gray-100">
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">Patient Dashboard</h1>
+      <div className="max-w-6xl mx-auto p-6">
 
-     <Card className="mb-8 shadow-md">
-  <CardHeader>
-    <CardTitle>Book Appointment</CardTitle>
-  </CardHeader>
+        <h1 className="text-3xl font-bold mb-8 text-gray-800">
+          Patient Dashboard
+        </h1>
 
-  <CardContent className="space-y-4">
-    <form onSubmit={handleSubmit} className="space-y-4">
+        <Card className="mb-8 shadow-md">
+          <CardHeader>
+            <CardTitle>Book Appointment</CardTitle>
+          </CardHeader>
 
-      <select
-        className="border p-2 w-full rounded-md"
-        value={doctorId}
-        onChange={(e) => setDoctorId(e.target.value)}
-      >
-        <option value="">Select Doctor</option>
-        {doctors.map((doc) => (
-          <option key={doc._id} value={doc._id}>
-            {doc.name}
-          </option>
-        ))}
-      </select>
+          <CardContent className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
 
-      <Input
-        type="date"
-         min={new Date().toISOString().split("T")[0]}
-        onChange={(e) => setDate(e.target.value)}
-      />
+              <select
+                className="border p-2 w-full rounded-md"
+                value={doctorId}
+                onChange={(e) => setDoctorId(e.target.value)}
+              >
+                <option value="">Select Doctor</option>
 
-      <select
-                  value={timeslot}
-                  onChange={(e) => setTimeslot(e.target.value)}
-                >
-                  <option value="">Select Time Slot</option>
+                {doctors.map((doc) => (
+                  <option key={doc._id} value={doc._id}>
+                    {doc.name}
+                  </option>
+                ))}
+              </select>
 
-                  {availableSlots.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </select>
+              <Input
+                type="date"
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setDate(e.target.value)}
+              />
 
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          onChange={(e) => setIsEmergency(e.target.checked)}
-        />
-        Emergency Case
-      </label>
+              <select
+                className="border p-2 w-full rounded-md"
+                value={timeslot}
+                onChange={(e) => setTimeslot(e.target.value)}
+              >
+                <option value="">Select Time Slot</option>
 
-      <Button className="w-full">
-        Book Appointment
-      </Button>
+                {availableSlots.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
 
-    </form>
-  </CardContent>
-</Card>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  onChange={(e) => setIsEmergency(e.target.checked)}
+                />
+                Emergency Case
+              </label>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-3">My Appointments</h2>
+              <Button className="w-full">
+                Book Appointment
+              </Button>
 
-        {appointments.map((appt) => (
-          <Card key={appt._id} className="mb-4 shadow-sm hover:shadow-md transition">
-  <CardContent className="p-5">
+            </form>
+          </CardContent>
+        </Card>
 
-    <div className="flex justify-between items-center">
-      <h3 className="font-semibold text-lg">
-        Dr. {appt.doctor?.name}
-      </h3>
+        <div className="mt-8">
 
-      <span
-        className={`px-3 py-1 rounded-full text-sm font-medium ${
-          appt.status === "booked"
-            ? "bg-yellow-100 text-yellow-700"
-            : appt.status === "completed"
-            ? "bg-green-100 text-green-700"
-            : "bg-red-100 text-red-700"
-        }`}
-      >
-        {appt.status}
-      </span>
-    </div>
+          <h2 className="text-xl font-semibold mb-3">
+            My Appointments
+          </h2>
 
-    <p className="text-gray-600 mt-2">
-      📅 {new Date(appt.appointmentDate).toDateString()}
-    </p>
+          {appointments.map((appt) => (
+            <Card
+              key={appt._id}
+              className="mb-4 shadow-sm hover:shadow-md transition"
+            >
+              <CardContent className="p-5">
 
-    <p className="text-gray-600">
-      ⏰ {appt.timeSlot}
-    </p>
+                <div className="flex justify-between items-center">
 
-    {queuePositions[appt._id] && (
-      <p className="text-green-600 font-medium mt-2">
-        🟢 Queue Position: #{queuePositions[appt._id]}
-      </p>
-    )}
+                  <h3 className="font-semibold text-lg">
+                    Dr. {appt.doctor?.name}
+                  </h3>
 
-    {appt.status === "booked" && (
-      <Button
-        onClick={() => cancelAppointment(appt._id)}
-        className="mt-3 bg-red-500 hover:bg-red-600"
-      >
-        Cancel
-      </Button>
-    )}
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      appt.status === "booked"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : appt.status === "completed"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {appt.status}
+                  </span>
 
-  </CardContent>
-</Card>))}
+                </div>
+
+                <p className="text-gray-600 mt-2">
+                  📅 {new Date(appt.appointmentDate).toDateString()}
+                </p>
+
+                <p className="text-gray-600">
+                  ⏰ {appt.timeSlot}
+                </p>
+
+                {queuePositions[appt._id] && (
+                  <p className="text-green-600 font-medium mt-2">
+                    🟢 Queue Position: #{queuePositions[appt._id]}
+                  </p>
+                )}
+
+                {/* PRESCRIPTION */}
+                {appt.status === "completed" && appt.prescription && (
+                  <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-4">
+
+                    <h3 className="font-semibold text-blue-700 mb-3">
+                      🩺 Prescription
+                    </h3>
+
+                    {appt.prescription.diagnosis && (
+                      <p className="mb-2">
+                        <span className="font-medium">
+                          Diagnosis:
+                        </span>{" "}
+                        {appt.prescription.diagnosis}
+                      </p>
+                    )}
+
+                    {appt.prescription.medicines && (
+                      <p className="mb-2 whitespace-pre-line">
+                        <span className="font-medium">
+                          Medicines:
+                        </span>{" "}
+                        {appt.prescription.medicines}
+                      </p>
+                    )}
+
+                    {appt.prescription.advice && (
+                      <p className="whitespace-pre-line">
+                        <span className="font-medium">
+                          Advice:
+                        </span>{" "}
+                        {appt.prescription.advice}
+                      </p>
+                    )}
+
+                  </div>
+                )}
+
+                {appt.status === "booked" && (
+                  <Button
+                    onClick={() => cancelAppointment(appt._id)}
+                    className="mt-3 bg-red-500 hover:bg-red-600"
+                  >
+                    Cancel
+                  </Button>
+                )}
+
+              </CardContent>
+            </Card>
+          ))}
+
+        </div>
       </div>
     </div>
-    </div>
   </>
-  );
-}
+);
 
