@@ -61,12 +61,16 @@ export default function Navbar() {
             </span>
           )}
 
-          <span
+          <button
             onClick={() => navigate("/ai-assistant")}
-            className={`cursor-pointer ${isActive("/ai-assistant")}`}
+            className={`px-4 py-2 rounded-full font-medium transition-all shadow-sm ${
+              location.pathname === "/ai-assistant"
+                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+            }`}
           >
-            AI Assistant
-          </span>
+            🤖 AI Assistant
+          </button>
 
           {/* ROLE BADGE */}
           <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm capitalize">
