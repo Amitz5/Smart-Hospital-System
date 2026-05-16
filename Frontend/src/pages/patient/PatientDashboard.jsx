@@ -91,7 +91,7 @@ useEffect(() => {
     try {
       await api.post("/appointments", {
         doctor: doctorId,
-        appointmentDate: new Date(date).toISOString(),
+        appointmentDate: date,
         timeSlot: timeslot,
         isEmergency: isEmergency,
       });

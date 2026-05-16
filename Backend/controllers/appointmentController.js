@@ -100,31 +100,37 @@ exports.getDoctorQueue = async (req, res) => {
   try {
     const doctorId = req.user.id;
 
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    // TODAY + FUTURE APPOINTMENTS
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     const appointments = await Appointment.find({
       doctor: doctorId,
-      appointmentDate: { $gte: startOfDay, $lte: endOfDay },
+      appointmentDate: { $gte: today },
       status: { $in: ["booked", "in-queue"] },
     })
-      .sort({ isEmergency: -1, createdAt: 1 })
+      .sort({
+        appointmentDate: 1,
+        isEmergency: -1,
+        createdAt: 1,
+      })
       .populate("patient", "name");
 
     const queue = appointments.map((appt, index) => ({
       appointmentId: appt._id,
       patientName: appt.patient.name,
       timeSlot: appt.timeSlot,
+      appointmentDate: appt.appointmentDate,
       isEmergency: appt.isEmergency,
-      estimatedWaitTime: index * 15, // minutes
+      estimatedWaitTime: index * 15,
     }));
 
     res.json(queue);
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 
