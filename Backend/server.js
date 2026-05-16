@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const aiRoutes = require("./routes/aiRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
   res.send("Smart Healthcare Backend Running");
 });
 
+app.use("/api/ai", aiRoutes);
 
 // Database connection
 mongoose

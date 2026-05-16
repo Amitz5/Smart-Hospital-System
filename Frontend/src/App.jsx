@@ -5,6 +5,7 @@ import PatientDashboard from "./pages/patient/PatientDashboard";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AiAssistant from "./pages/AiAssistant";
 
 export default function App() {
   return (
@@ -39,6 +40,11 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+          <Route path="/ai-assistant"
+           element={<AiAssistant />
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );
